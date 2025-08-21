@@ -22,21 +22,19 @@ function App() {
       let result = "Something went wrong 😢";
 
       if (action === "summarize" && data.summary) {
-        result = Array.isArray(data.summary)
-          ? data.summary[0]?.summary_text || JSON.stringify(data.summary)
-          : JSON.stringify(data.summary);
+        result = data.summary;
       }
 
       if (action === "rewrite" && data.rewritten) {
-        result = Array.isArray(data.rewritten)
-          ? data.rewritten[0]?.generated_text || JSON.stringify(data.rewritten)
-          : JSON.stringify(data.rewritten);
+        result = data.rewritten;
       }
 
       if (action === "correct" && data.corrected) {
-        result = Array.isArray(data.corrected)
-          ? data.corrected[0]?.generated_text || JSON.stringify(data.corrected)
-          : JSON.stringify(data.corrected);
+        result = data.corrected;
+      }
+
+      if (action === "expand" && data.expanded) {
+        result = data.expanded;
       }
 
       setOutput(result);
@@ -59,7 +57,7 @@ function App() {
         placeholder="Type or paste your text here..."
       />
 
-      <div className="flex gap-3 mt-4">
+      <div className="flex flex-wrap gap-3 mt-4">
         <button
           onClick={() => handleAction("summarize")}
           disabled={loading}
@@ -82,6 +80,14 @@ function App() {
           className="px-5 py-3 bg-purple-600 text-white rounded-2xl shadow hover:bg-purple-700 transition"
         >
           {loading ? "Working..." : "Correct"}
+        </button>
+
+        <button
+          onClick={() => handleAction("expand")}
+          disabled={loading}
+          className="px-5 py-3 bg-orange-600 text-white rounded-2xl shadow hover:bg-orange-700 transition"
+        >
+          {loading ? "Working..." : "Expand"}
         </button>
       </div>
 

@@ -12,23 +12,19 @@ function App() {
     setOutput("");
 
     try {
-      const res = await fetch(`https://aiword-1.onrender.com/${action}`, {
+      const res = await fetch("https://aiword-1.onrender.com/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input }),
+        body: JSON.stringify({ text: input, mode: action }),
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Server error");
 
-      let result = "Something went wrong 😢";
-      if (action === "summarize" && data.summary) result = data.summary;
-      if (action === "rewrite" && data.rewritten) result = data.rewritten;
-      if (action === "correct" && data.corrected) result = data.corrected;
-      if (action === "expand" && data.expanded) result = data.expanded;
-
-      setOutput(result);
-    } catch (err) {
-      setOutput("Error connecting to server.");
+      // Backend always responds with { mode, output }
+      setOutput(data.output || "No output received.");
+    } catch (err: any) {
+      setOutput(`❌ Error: ${err.message}`);
     }
 
     setLoading(false);
@@ -58,6 +54,7 @@ function App() {
           <option value="rewrite">Rewrite</option>
           <option value="correct">Correct</option>
           <option value="expand">Expand</option>
+          <option value="paraphrase">Paraphrase</option>
         </select>
 
         <button

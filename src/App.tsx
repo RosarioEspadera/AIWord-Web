@@ -4,8 +4,9 @@ function App() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [action, setAction] = useState("summarize");
 
-  const handleAction = async (action: string) => {
+  const handleAction = async () => {
     if (!input.trim()) return;
     setLoading(true);
     setOutput("");
@@ -20,22 +21,10 @@ function App() {
       const data = await res.json();
 
       let result = "Something went wrong 😢";
-
-      if (action === "summarize" && data.summary) {
-        result = data.summary;
-      }
-
-      if (action === "rewrite" && data.rewritten) {
-        result = data.rewritten;
-      }
-
-      if (action === "correct" && data.corrected) {
-        result = data.corrected;
-      }
-
-      if (action === "expand" && data.expanded) {
-        result = data.expanded;
-      }
+      if (action === "summarize" && data.summary) result = data.summary;
+      if (action === "rewrite" && data.rewritten) result = data.rewritten;
+      if (action === "correct" && data.corrected) result = data.corrected;
+      if (action === "expand" && data.expanded) result = data.expanded;
 
       setOutput(result);
     } catch (err) {
@@ -46,55 +35,44 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">AI Text Helper</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 p-6">
+      <h1 className="text-4xl font-extrabold mb-6 text-blue-700 drop-shadow-md">
+        ✨ AI Text Helper
+      </h1>
 
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="w-full max-w-2xl p-4 border rounded-2xl shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full max-w-2xl p-4 border rounded-2xl shadow-md focus:outline-none focus:ring-4 focus:ring-blue-400 bg-white"
         rows={6}
         placeholder="Type or paste your text here..."
       />
 
-      <div className="flex flex-wrap gap-3 mt-4">
-        <button
-          onClick={() => handleAction("summarize")}
-          disabled={loading}
-          className="px-5 py-3 bg-green-600 text-white rounded-2xl shadow hover:bg-green-700 transition"
+      <div className="flex items-center gap-4 mt-4">
+        <select
+          value={action}
+          onChange={(e) => setAction(e.target.value)}
+          className="px-4 py-3 rounded-2xl shadow border focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
         >
-          {loading ? "Working..." : "Summarize"}
-        </button>
+          <option value="summarize">Summarize</option>
+          <option value="rewrite">Rewrite</option>
+          <option value="correct">Correct</option>
+          <option value="expand">Expand</option>
+        </select>
 
         <button
-          onClick={() => handleAction("rewrite")}
+          onClick={handleAction}
           disabled={loading}
-          className="px-5 py-3 bg-blue-600 text-white rounded-2xl shadow hover:bg-blue-700 transition"
+          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-2xl shadow hover:bg-blue-700 transition"
         >
-          {loading ? "Working..." : "Rewrite"}
-        </button>
-
-        <button
-          onClick={() => handleAction("correct")}
-          disabled={loading}
-          className="px-5 py-3 bg-purple-600 text-white rounded-2xl shadow hover:bg-purple-700 transition"
-        >
-          {loading ? "Working..." : "Correct"}
-        </button>
-
-        <button
-          onClick={() => handleAction("expand")}
-          disabled={loading}
-          className="px-5 py-3 bg-orange-600 text-white rounded-2xl shadow hover:bg-orange-700 transition"
-        >
-          {loading ? "Working..." : "Expand"}
+          {loading ? "Working..." : "Run"}
         </button>
       </div>
 
       {output && (
-        <div className="mt-6 w-full max-w-2xl p-4 bg-white rounded-2xl shadow-md">
-          <h2 className="font-semibold mb-2">Result:</h2>
-          <p className="whitespace-pre-wrap">{output}</p>
+        <div className="mt-6 w-full max-w-2xl p-4 bg-white rounded-2xl shadow-lg border">
+          <h2 className="font-semibold mb-2 text-lg text-gray-700">Result:</h2>
+          <p className="whitespace-pre-wrap text-gray-800">{output}</p>
         </div>
       )}
     </div>
